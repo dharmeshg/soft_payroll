@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="33" height="34.207" viewBox="0 0 33 34.207">
+  <g id="Group_487" data-name="Group 487" transform="translate(-1461 -906)">
+    <g id="Group_486" data-name="Group 486" transform="translate(1479.267 929.396)">
+      <path id="Path_90" data-name="Path 90" d="M18.594,9.683H16.139V6H12.456V9.683H10l4.3,4.3Z" transform="translate(-6.931 -6)" fill="#11c111"/>
+      <path id="Path_91" data-name="Path 91" d="M0,0H14.733V8.415H0Z" fill="none"/>
+    </g>
+    <path id="Path_88" data-name="Path 88" d="M146.552,1262.36a.776.776,0,0,0-.777.777v.777a.776.776,0,0,0,.777.777h7.777l.012,5.041a1.165,1.165,0,0,0,1.163,1.163l5.041.013v22.158a1.139,1.139,0,0,1-1.166,1.166H141.5a1.139,1.139,0,0,1-1.166-1.166V1281.9a.776.776,0,0,0-.777-.777h-.777a.776.776,0,0,0-.777.777v11.166a3.517,3.517,0,0,0,3.5,3.5H159.38a3.517,3.517,0,0,0,3.5-3.5v-23.7a1.166,1.166,0,0,0-.342-.824L156.7,1262.7a1.166,1.166,0,0,0-.824-.342ZM138,1278.686a.776.776,0,0,0,.777.777h.777a.776.776,0,0,0,.777-.777v-7.774a.776.776,0,0,0-.777-.777h-.777a.776.776,0,0,0-.777.777Z" transform="translate(1331.122 -356.359)" fill="#242730"/>
+    <path id="Path_92" data-name="Path 92" d="M138.605,258a3.517,3.517,0,0,0-3.5,3.5v1.944a.776.776,0,0,0,.777.777h.777a.776.776,0,0,0,.777-.777V261.5a1.139,1.139,0,0,1,1.166-1.166h1.944a.776.776,0,0,0,.777-.777v-.777a.776.776,0,0,0-.777-.777Z" transform="translate(1334.015 648.002)" fill="#11c111"/>
+    <rect id="Rectangle_338" data-name="Rectangle 338" width="19" height="13" transform="translate(1461 920.604)" fill="#11c111"/>
+    <text id="XLS" transform="translate(1463 930.604)" fill="#fff" font-size="9" font-family="SegoeUI-Bold, Segoe UI" font-weight="700"><tspan x="0" y="0">XLS</tspan></text>
+  </g>
+</svg>

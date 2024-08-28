@@ -1,0 +1,55 @@
+<?php
+   
+namespace App\Notifications;
+   
+use Illuminate\Bus\Queueable;
+use Illuminate\Notifications\Notification;
+use Illuminate\Contracts\Queue\ShouldQueue;
+   
+class Transfernotification extends Notification
+{
+    use Queueable;
+  
+    public $transfer;
+   
+    /**
+     * Create a new notification instance.
+     *
+     * @return void
+     */
+    public function __construct($transfer)
+    {
+        $this->transfer = $transfer;
+    }
+   
+    /**
+     * Get the notification's delivery channels.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function via($notifiable)
+    {
+        return ['database'];
+    }
+   
+    /**
+     * Get the mail representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return \Illuminate\Notifications\Messages\MailMessage
+     */
+  
+    /**
+     * Get the array representation of the notification.
+     *
+     * @param  mixed  $notifiable
+     * @return array
+     */
+    public function toArray($notifiable)
+    {
+        return [
+            'transfer_id' => $this->transfer['transfer_id']
+        ];
+    }
+}
