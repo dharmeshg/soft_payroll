@@ -47,6 +47,11 @@ use SimpleSoftwareIO\QrCode\QrCodeServiceProvider;
 use SimpleSoftwareIO\QrCode\Facades\QrCode;
 
 use DateTime;
+use App\Models\NonAcademicsDepartment;
+use App\Models\Division;
+use App\Models\NonAcademicUnit;
+use App\Models\NonAcademicsDesignation;
+
 
 class EmployeeController extends Controller
 {
@@ -115,8 +120,13 @@ class EmployeeController extends Controller
         $states = State::get();
         $stateoforigins = StateOrigin::get();
 
+        $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+        $division = Division::where('user_id','=',Auth::user()->id)->get();
+        $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+        $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
 
-        return view('employee/add1', compact('order_next_id', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data'));
+
+        return view('employee/add1', compact('order_next_id', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data', 'non_academic_departments', 'division', 'non_academic_units', 'non_academic_designations'));
     }
 
     public function getState(Request $request)
@@ -165,7 +175,7 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         $validatedData = $request->validate([
             'password'=>'required|min:8'
         ]);
@@ -2136,6 +2146,24 @@ class EmployeeController extends Controller
         }
         // Output the new PDF
         $pdf->Output();
+    }
+
+    public function getDivision(Request $request) {
+        if($request->directorate_id != '') {
+            $data['departmentname'] = Division::where("faculty_id", $request->directorate_id)
+            ->get();
+        }
+        return response()->json($data);
+    }
+
+    public function getUnitNonAcademic(Request $request) {
+        if($request->department_id != '') {
+            $data['unit'] = NonAcademicUnit::where("department_id", $request->department_id)
+                ->get();
+            $data['desi'] = NonAcademicsDesignation::where("department_id", $request->department_id)
+                ->get();
+        }
+        return response()->json($data);
     }
 
     

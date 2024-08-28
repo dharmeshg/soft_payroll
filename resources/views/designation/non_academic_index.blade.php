@@ -153,15 +153,14 @@
                             <th>{{$key+1}}</th>
                             <td>{{$item->title}}</td>
                             <td>{{$item->description}}</td>
-                            <td class="thumbnail-image"><img src="{{asset('public/images/'.$item->image)}}"></td>
-                            <td>@if($item->id != 1)
+                            <td class="thumbnail-image"><img src="{{asset('public/images/'.$item->image)}}" style="width:150px; height:150px"></td>
+                            <td>
+                        
                             <input type="checkbox" class="toggle" id="rounded{{ $item->id }}" data-itemid="{{ $item->id }}" {{ ( ( $item->status == 1 ) ? 'checked' : '' ) }}>
                             <label for="rounded{{ $item->id }}" data-checked="ON" data-unchecked="off" class="rounded on-off-btn"></label>
-                            @else
-                            -
-                            @endif                  
-                            <a href="{{route('designation.edit',[$item->id])}}" class="fas fa-edit"></a>
-                            <a href="{{route('designation.delete',[$item->id])}}" class="fas fa-trash delete" id="delete" data-title="" data-original-title="delete Designation" data-title="{{$item->name}}"></a></td>
+                              
+                            <a href="{{route('non_academic_designation.edit',[$item->id])}}" class="fas fa-edit"></a>
+                            <a href="{{route('non_academic_designation.delete',[$item->id])}}" class="fas fa-trash delete" id="delete" data-title="" data-original-title="delete Designation" data-title="{{$item->name}}"></a></td>
                           </tr>
                            @endforeach
                       </tbody>
@@ -181,7 +180,7 @@
         var data_status = ( ( $(this).prop("checked") == true ) ? '1' : '0' );
         $.ajax({
             type: "POST",
-            url: '{{ route("designation.statusupdate") }}',
+            url: '{{ route("non_academic_designation.statusupdate") }}',
             data: {
                 data_designationid: data_designationid,
                 data_status: data_status,

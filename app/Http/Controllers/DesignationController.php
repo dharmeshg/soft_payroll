@@ -54,9 +54,9 @@ class DesignationController extends Controller
             $designation->save();
     
             if($designation)
-                return redirect()->route('designation.list')->with('success',"Designation Added Successfully.");
+                return redirect()->route('non_academic_designation.list')->with('success',"Designation Added Successfully.");
             else
-                return redirect()->route('designation.list')->with('error',"Error In Adding Designation.");
+                return redirect()->route('non_academic_designation.list')->with('error',"Error In Adding Designation.");
 
         }else{
             $designation = new Designation();
@@ -91,11 +91,47 @@ class DesignationController extends Controller
     {
         $faculty = FacultyDirectorate::where('user_id','=',Auth::user()->id)->get();  
         $designation = designation::findOrFail($id);
-        return view('/designation/add', compact('designation' , 'id','faculty'));
+        $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        $division = Division::get();
+
+        return view('/designation/add', compact('designation' , 'id','faculty', 'nonAcademicDepartment', 'division'));
     }
 
     public function update(Request $request, $id)
     {
+
+     if($request->noe_academic_division != ''){
+        $designation = NonAcademicsDesignation::find($id);
+        $designation->title = $request['title'];
+        $designation->description = $request['description'];
+        $designation->faculty_id = $request['noe_academic_department'];
+        $designation->department_id = $request['noe_academic_division'];
+
+        if($request->hasFile('image')){
+            $designation1 = 'public/images/'.'$designation->image';
+            if(File::exists($designation))
+            {
+                File::delete($designation);
+            }
+            $file = $request->file('image');
+            $extension = $file->getClientOriginalName();
+            $filename = time().'.'.$extension;
+            $file->move('public/images/', $filename);  
+            $designation->image = $filename;          
+        }
+        // $designation = Designation::findOrFail($code);
+        // $data = $request->input();
+
+        if($designation){
+            if($designation->update())
+                return redirect()->route('non_academic_designation.list')->with('success',"Designation Edited Successfully.");
+            else
+                return redirect()->route('non_academic_designation.list')->with('error',"Error in Updating Designation.");
+        }else{
+            return redirect()->route('non_academic_designation.list')->with('error',"Designation Not Found.");
+        }
+
+     }else{
         $designation = Designation::find($id);
         $designation->title = $request['title'];
         $designation->description = $request['description'];
@@ -125,6 +161,9 @@ class DesignationController extends Controller
         }else{
             return redirect()->route('designation.list')->with('error',"Designation Not Found.");
         }
+
+     }
+  
     }
 
     public function delete($code)

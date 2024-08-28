@@ -164,6 +164,12 @@ Route::post('department/designation', [DesignationController::class, 'getDepartm
 
 // Designation Non Academic
 Route::get('non-academic-designation', [NonAcademicDesignationController::class, 'index'])->name('non_academic_designation.list')->middleware('auth');
+Route::get('non-academic-designation/edit/{id}', [NonAcademicDesignationController::class, 'edit'])->name('non_academic_designation.edit')->middleware('auth');
+Route::get('non-academic-designation/delete/{id}', [NonAcademicDesignationController::class, 'delete'])->name('non_academic_designation.delete')->middleware('auth');
+Route::post('non-academic-designation/status-update', [NonAcademicDesignationController::class, 'statusUpdate'])->name('non_academic_designation.statusupdate')->middleware('auth');
+
+
+
 
 
 // Department
@@ -231,6 +237,11 @@ Route::post('employee/Permission/{id}', [EmployeeController::class, 'StorePermis
 Route::post('employee/department', [EmployeeController::class, 'getDepartment'])->name('getDepartment')->middleware('auth');
 Route::post('employee/unit', [EmployeeController::class, 'getUnit'])->name('getUnit')->middleware('auth');
 Route::post('employee/employeelist', [EmployeeController::class, 'getemployeelist'])->name('getemployeelist')->middleware('auth');
+
+Route::post('employee/division', [EmployeeController::class, 'getDivision'])->name('getDivision')->middleware('auth');
+Route::post('employee/non-academic-unit', [EmployeeController::class, 'getUnitNonAcademic'])->name('getUnitNonAcademic')->middleware('auth');
+
+
 
 // Route::get('employee/profile/{id}',[EmployeeController::class, 'employeeprofile'])->name('employee.profile')->middleware('auth');
 // Route::post('employee/profile/{id}',[EmployeeController::class, 'employeeprofileupdate'])->name('employee.profile.update')->middleware('auth');

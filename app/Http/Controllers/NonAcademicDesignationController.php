@@ -90,56 +90,60 @@ class NonAcademicDesignationController extends Controller
     public function edit($id)
     {
         $faculty = FacultyDirectorate::where('user_id','=',Auth::user()->id)->get();  
-        $designation = designation::findOrFail($id);
-        return view('/designation/add', compact('designation' , 'id','faculty'));
+        $designation = NonAcademicsDesignation::findOrFail($id);
+        $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        $division = Division::get();
+        $designation['category'] = 'Non-Academic';
+
+        return view('/designation/add', compact('designation' , 'id','faculty','nonAcademicDepartment', 'division'));
     }
 
-    public function update(Request $request, $id)
-    {
-        $designation = Designation::find($id);
-        $designation->title = $request['title'];
-        $designation->description = $request['description'];
-        $designation->faculty_id = $request['directorate'];
-        $designation->department_id = $request['department'];
+    // public function update(Request $request, $id)
+    // {
+    //     $designation = Designation::find($id);
+    //     $designation->title = $request['title'];
+    //     $designation->description = $request['description'];
+    //     $designation->faculty_id = $request['directorate'];
+    //     $designation->department_id = $request['department'];
 
-        if($request->hasFile('image')){
-            $designation1 = 'public/images/'.'$designation->image';
-            if(File::exists($designation))
-            {
-                File::delete($designation);
-            }
-            $file = $request->file('image');
-            $extension = $file->getClientOriginalName();
-            $filename = time().'.'.$extension;
-            $file->move('public/images/', $filename);  
-            $designation->image = $filename;          
-        }
-        // $designation = Designation::findOrFail($code);
-        // $data = $request->input();
+    //     if($request->hasFile('image')){
+    //         $designation1 = 'public/images/'.'$designation->image';
+    //         if(File::exists($designation))
+    //         {
+    //             File::delete($designation);
+    //         }
+    //         $file = $request->file('image');
+    //         $extension = $file->getClientOriginalName();
+    //         $filename = time().'.'.$extension;
+    //         $file->move('public/images/', $filename);  
+    //         $designation->image = $filename;          
+    //     }
+    //     // $designation = Designation::findOrFail($code);
+    //     // $data = $request->input();
 
-        if($designation){
-            if($designation->update())
-                return redirect()->route('designation.list')->with('success',"Designation Edited Successfully.");
-            else
-                return redirect()->route('designation.list')->with('error',"Error in Updating Designation.");
-        }else{
-            return redirect()->route('designation.list')->with('error',"Designation Not Found.");
-        }
-    }
+    //     if($designation){
+    //         if($designation->update())
+    //             return redirect()->route('designation.list')->with('success',"Designation Edited Successfully.");
+    //         else
+    //             return redirect()->route('designation.list')->with('error',"Error in Updating Designation.");
+    //     }else{
+    //         return redirect()->route('designation.list')->with('error',"Designation Not Found.");
+    //     }
+    // }
 
     public function delete($code)
     {
-        $designation = Designation::where('id', '=', $code)->first();   
+        $designation = NonAcademicsDesignation::where('id', '=', $code)->first();   
         $designation->delete();
 
-        return redirect()->route('designation.list')->with('success',"Designation Deleted Successfully.");
+        return redirect()->route('non_academic_designation.list')->with('success',"Designation Deleted Successfully.");
     }
 
     // Status Update
     public function statusUpdate() {
         if( isset( $_POST['data_designationid'] ) && !empty( $_POST['data_designationid'] ) ) {
             $designation_id = $_POST['data_designationid'];
-            Designation::where('id', $designation_id)->update([ 'status' => $_POST['data_status'] ]);
+            NonAcademicsDesignation::where('id', $designation_id)->update([ 'status' => $_POST['data_status'] ]);
             echo json_encode( [ 'status' => 'success' ] );
         } else {
             echo json_encode( [ 'status' => 'error' ] );
@@ -147,10 +151,10 @@ class NonAcademicDesignationController extends Controller
         die;
     } 
 
-    public function getDepartment(Request $request)
-    {
-        $data['departmentname'] = Department::where("faculty_id", $request->directorate_id)
-            ->get();
-        return response()->json($data);
-    }
+    // public function getDepartment(Request $request)
+    // {
+    //     $data['departmentname'] = Department::where("faculty_id", $request->directorate_id)
+    //         ->get();
+    //     return response()->json($data);
+    // }
 }

@@ -207,7 +207,7 @@
                     }
                 });
             });
-            @if (isset($unit->department_id) && $unit->department_id != null)
+            @if (isset($unit->faculty_id) && $unit->faculty_id != null)
                 var directorate_id = '{{ $unit->faculty_id }}';
                 //console.log(directorate_id);
                 $("#noe_academic_division").html('');

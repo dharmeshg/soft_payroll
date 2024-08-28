@@ -88,12 +88,12 @@
                     <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 form-group">
                                     <label for="directorate">Category</label>
                                     <select class="category_unit" name="category_unit" id="category_unit"
-                                        @if (isset($unit->category)) disabled @endif>
+                                        @if (isset($designation->category)) disabled @endif>
                                         <option
-                                            {{ isset($unit->category) && $unit->category == 'Academic' ? 'selected' : '' }}
+                                            {{ isset($designation->category) && $designation->category == 'Academic' ? 'selected' : '' }}
                                             value="Academic">Academic</option>
                                         <option
-                                            {{ isset($unit->category) && $unit->category == 'Non-Academic' ? 'selected' : '' }}
+                                            {{ isset($designation->category) && $designation->category == 'Non-Academic' ? 'selected' : '' }}
                                             value="Non-Academic">Non-Academic</option>
                                     </select>
                     </div>
@@ -124,7 +124,7 @@
                                         <option></option>
                                         @foreach ($nonAcademicDepartment as $faculties)
                                             <option
-                                                {{ isset($unit->faculty_id) && $unit->faculty_id == $faculties->id ? 'selected' : '' }}
+                                                {{ isset($designation->faculty_id) && $designation->faculty_id == $faculties->id ? 'selected' : '' }}
                                                 value="{{ $faculties->id }}">{{ $faculties->departmentname }}</option>
                                         @endforeach
                                     </select>
@@ -137,11 +137,21 @@
                                         <option>--Select Division--</option>
                                     </select>
                                 </div>
-                     <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 department-image form-group">
+                         <div class="col-xxl-2 col-xl-2 col-lg-2 col-md-2 col-sm-12 col-12 department-image form-group">
       
-                    <label for="inputTag">Image Upload</label>
-                    <input type="file" name="image" required="" class="fullwidth input rqd" id="inputTag">
-                    </div>
+                            <label for="inputTag">Image Upload</label>
+                            <input type="file" name="image" @if (!isset($designation)) required="" @endif class="fullwidth input rqd" id="inputTag">
+                            @error('image')
+                                <div class="alert alert-danger mt-1 mb-1">{{ $message }}</div>
+                            @enderror
+                        </div>
+                        <div class="col-sm-3">
+                          <label>&nbsp;</label>
+                          @if(isset($designation->image) && $designation->image != '' && $designation->image != NULL)
+                          <img id="image_preview" src="{{asset('public/images')}}/{{$designation->image}}" alt="Kin Image" style="width:150px; height:150px" class="img-fluid" />
+                          @else
+                          @endif
+                        </div>
                   </section>
                   </div>
                   <div class="row">
@@ -170,6 +180,10 @@
                  });
             });
             $(document).ready(function() {
+              if ($('#category_unit').val()) {
+                set_academic($('#category_unit').val());
+
+            }
 
               $('.js-directorate').select2({
                   placeholder: "--Select School/Directorate--",
@@ -282,6 +296,50 @@
                     }
                 });
             });
+
+            @if (isset($designation->faculty_id) && $designation->faculty_id != null)
+                var directorate_id = '{{ $designation->faculty_id }}';
+                //console.log(directorate_id);
+                $("#noe_academic_division").html('');
+                $.ajax({
+                    url: "{{ url('non-academic-unit/department') }}",
+                    type: "POST",
+                    data: {
+                        directorate_id: directorate_id,
+                        _token: '{{ csrf_token() }}'
+                    },
+                    dataType: 'json',
+
+                    success: function(result) {
+                        console.log(result);
+                        $('#department-dropdown').html(
+                            '<option value="">Select Division</option>');
+                        $.each(result.division, function(key, value) {
+                            $("#noe_academic_division").append('<option value="' + value
+                                .id + '">' + value.departmentname + '</option>');
+                        });
+                    }
+                });
+            @endif
+
+            function set_academic(category_unit) {
+                if (category_unit == 'Academic') {
+                    $('.academic_form').css('display', 'block');
+                    $('.non_academic_form').css('display', 'none');
+                    $('#directorate-dropdown').attr('required', true);
+                    $('#department-dropdown').attr('required', true);
+                    $('#noe_academic_department').attr('required', false);
+                    $('#noe_academic_division').attr('required', false);
+                } else {
+                    $('.academic_form').css('display', 'none');
+                    $('.non_academic_form').css('display', 'block');
+                    $('#directorate-dropdown').attr('required', false);
+                    $('#department-dropdown').attr('required', false);
+                    $('#noe_academic_department').attr('required', true);
+                    $('#noe_academic_division').attr('required', true);
+
+                }
+            }
 
             
 });
