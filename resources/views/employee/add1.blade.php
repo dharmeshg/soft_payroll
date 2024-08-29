@@ -504,22 +504,21 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                   </div>
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
                     <label for="staff_id">Category</label>
-                    <select class="category_unit" name="category_unit" id="category_unit"
-                                        @if (isset($employee->category)) disabled @endif>
+                    <select class="category_unit" name="category_unit" id="category_unit">
                                         <option
-                                            {{ isset($employee->category) && $employee->category == 'Academic' ? 'selected' : '' }}
+                                            {{ isset($employee->official_information->category) && $employee->official_information->category == 'Academic' ? 'selected' : '' }}
                                             value="Academic">Academic</option>
                                         <option
-                                            {{ isset($employee->category) && $employee->category == 'Non-Academic' ? 'selected' : '' }}
+                                            {{ isset($employee->official_information->category) && $employee->official_information->category == 'Non-Academic' ? 'selected' : '' }}
                                             value="Non-Academic">Non-Academic</option>
                                     </select>
                   </div>
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group non_academic_form" style="display:none;">
                     <label for="directorate">Department (Non-Academic)</label>
-                    <select class="js-example-basic-single" required  name="department_non_Academic" id="department_non_Academic">
+                    <select class="js-example-basic-single"  name="department_non_Academic" id="department_non_Academic">
                       <option></option>
                       @foreach($non_academic_departments as $facultydirectorate)
-                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->directorate == $facultydirectorate->id) ? 'selected' : '' ) }} value="{{ $facultydirectorate->id }}">{{$facultydirectorate->departmentname}}</option>
+                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->non_Academic_department == $facultydirectorate->id) ? 'selected' : '' ) }} value="{{ $facultydirectorate->id }}">{{$facultydirectorate->departmentname}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -536,10 +535,10 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
 
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group non_academic_form" style="display:none;">
                     <label for="directorate">Division (Non-Academic)</label>
-                    <select class="js-example-basic-single" required name="division_non_Academic" id="division_non_Academic">
+                    <select class="js-example-basic-single" name="division_non_Academic" id="division_non_Academic">
                       <option></option>
                       @foreach($division as $divisions)
-                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->directorate == $divisions->id) ? 'selected' : '' ) }} value="{{ $divisions->id }}">{{$divisions->departmentname}}</option>
+                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->non_Academic_division == $divisions->id) ? 'selected' : '' ) }} value="{{ $divisions->id }}">{{$divisions->departmentname}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -559,12 +558,12 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
 
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group non_academic_form" style="display:none;">
                     <label for="role">Role/Post Held (Non-Academic)</label>
-                    <select class="js-example-basic-single" required name="role_non_Academic" id="role_non_Academic">
+                    <select class="js-example-basic-single" name="role_non_Academic" id="role_non_Academic">
                       <option></option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'Employee' ) ? 'selected' : '')}} value="Employee">Employee</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HODV' ) ? 'selected' : '')}} value="HODV">HODV</option>
+                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
+                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'Employee' ) ? 'selected' : '')}} value="Employee">Employee</option>
+                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
+                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HODV' ) ? 'selected' : '')}} value="HODV">HODV</option>
                     </select>
                   </div>
 
@@ -591,10 +590,10 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
 
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group non_academic_form" style="display:none">
                     <label for="designation">Designation (Non-Academic)</label>
-                    <select class="js-example-basic-single" required name="designation_non_Academic" id="designation_non_Academic">
+                    <select class="js-example-basic-single" name="designation_non_Academic" id="designation_non_Academic">
                       <option></option>
                       @foreach($non_academic_designations as $non_academic_designation)
-                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->designation == $non_academic_designation->id) ? 'selected' : '' ) }} value="{{ $non_academic_designation->id }}">{{$non_academic_designation->title}}</option>
+                      <option {{ ( isset( $employee->official_information ) && ($employee->official_information->non_Academic_designation == $non_academic_designation->id) ? 'selected' : '' ) }} value="{{ $non_academic_designation->id }}">{{$non_academic_designation->title}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -611,10 +610,10 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
 
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group non_academic_form" style="display:none;">
                     <label for="unit">Unit (Non-Academic)</label>
-                    <select class="js-example-basic-single js-unit" required name="unit_non_Academic" id="unit_non_Academic" >
+                    <select class="js-example-basic-single js-unit" name="unit_non_Academic" id="unit_non_Academic" >
                       <option></option>
                       @foreach($non_academic_units as $non_academic_unit)
-                      <option {{ ( isset( $employee->official_information->unit ) && ($employee->official_information->unit == $non_academic_unit->id) ? 'selected' : '' ) }} value="{{ $non_academic_unit->id }}">{{$non_academic_unit->name}}</option>
+                      <option {{ ( isset( $employee->official_information->non_Academic_unit ) && ($employee->official_information->non_Academic_unit == $non_academic_unit->id) ? 'selected' : '' ) }} value="{{ $non_academic_unit->id }}">{{$non_academic_unit->name}}</option>
                       @endforeach
                     </select>
                   </div>
@@ -1523,21 +1522,53 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                       </div>
                     </div>
                     <div class="row">
-                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
-                        <label for="workdepartment">Department</label>
-                          <select id="workdepartment" name="workdepartment[{{$i}}]" class="workdepartment required form-control">
+                    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
+                        <label for="workdepartment">Category</label>
+                        <select class="category_unit_work_experience" name="category_unit_work_experience[{{$i}}]" id="category_unit_work_experience">
+                                        
+                                            <option
+                                                {{ isset($workdatas->category) && $workdatas->category == 'Academic' ? 'selected' : '' }}
+                                                value="Academic">Academic</option>
+                                            <option
+                                                {{ isset($workdatas->category) && $workdatas->category == 'Non-Academic' ? 'selected' : '' }}
+                                                value="Non-Academic">Non-Academic</option>
+                                </select>
+                      </div>
+
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form" @if($workdatas->category == "Academic") style="display:block" @else style="display:none" @endif>
+                        <label for="workdepartment">Department (Academic)</label>
+                          <select id="workdepartment" name="workdepartment[{{$i}}]" class="workdepartment form-control">
                             <option></option>
                             @foreach($departments as $department)
                             <option {{ ( isset( $workdatas->workdepartment ) && ($workdatas->workdepartment == $department->id) ? 'selected' : '' ) }} value="{{ $department->id }}">{{$department->departmentname}}</option>
                             @endforeach
                           </select>
                       </div>
-                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
-                        <label for="workdesignation">Designation</label>
-                        <select id="workdesignation" name="workdesignation[{{$i}}]" class="workdesignation required form-control">
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form" @if($workdatas->category == "Academic") style="display:block" @else style="display:none" @endif>
+                        <label for="workdesignation">Designation (Academic)</label>
+                        <select id="workdesignation" name="workdesignation[{{$i}}]" class="workdesignation form-control">
                             <option></option>
                             @foreach($designations as $designation)
                             <option {{ ( isset( $workdatas->workdesignation ) && ($workdatas->workdesignation == $designation->id) ? 'selected' : '' ) }} value="{{ $designation->id }}">{{$designation->title}}</option>
+                            @endforeach
+                        </select>
+                      </div>
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form" @if($workdatas->category == "Non-Academic") style="display:block" @else style="display:none" @endif>
+                        <label for="workdepartment">Department (Non-Academic)</label>
+                        <select id="workdepartment_non_academic" name="workdepartment_non_academic[0]" class="workdepartment_non_academic form-control">
+                          
+                            @foreach($non_academic_departments as $department)
+                            <option value="{{ $department->id }}">{{$department->departmentname}}</option>
+                            @endforeach
+                          </select>
+                      </div>
+
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form" @if($workdatas->category == "Non-Academic") style="display:block" @else style="display:none" @endif>
+                        <label for="workdesignation">Designation (Non-Academic)</label>
+                        <select id="workdesignation_non_academic" name="workdesignation_non_academic[0]" class="workdesignation_non_academic form-control">
+                       
+                            @foreach($non_academic_designations as $designation)
+                            <option value="{{ $designation->id }}">{{$designation->title}}</option>
                             @endforeach
                         </select>
                       </div>
@@ -1587,8 +1618,8 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                       <option {{ ( isset($workdatas->workgradelevel) && ( $workdatas->workgradelevel == 'other' ) ? 'selected' : '')}} value="other">Other</option>
                     </select>
                       </div>
-                    </div>
-                    <div class="row">
+                    <!-- </div>
+                    <div class="row"> -->
                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
                         <label>Step</label>
                         <select class="js-example-basic-single" name="workstep[{{$i}}]">
@@ -1678,19 +1709,51 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                     </div>
                     <div class="row">
                        <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
-                        <label for="workdepartment">Department</label>
-                        <select id="workdepartment" name="workdepartment[0]" class="workdepartment required form-control">
+                        <label for="staff_id">Category</label>
+                                <select class="category_unit_work_experience" name="category_unit_work_experience[]" id="category_unit_work_experience"
+                                            @if (isset($employee->category)) disabled @endif>
+                                            <option
+                                                {{ isset($employee->category) && $employee->category == 'Academic' ? 'selected' : '' }}
+                                                value="Academic">Academic</option>
+                                            <option
+                                                {{ isset($employee->category) && $employee->category == 'Non-Academic' ? 'selected' : '' }}
+                                                value="Non-Academic">Non-Academic</option>
+                                </select>
+                       </div>
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form">
+                        <label for="workdepartment">Department (Academic)</label>
+                        <select id="workdepartment" name="workdepartment[0]" required class="workdepartment form-control">
                             <option></option>
                             @foreach($departments as $department)
                             <option value="{{ $department->id }}">{{$department->departmentname}}</option>
                             @endforeach
                           </select>
                       </div>
-                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
-                        <label for="workdesignation">Designation</label>
-                        <select id="workdesignation" name="workdesignation[0]" class="workdesignation required form-control">
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form">
+                        <label for="workdesignation">Designation (Academic)</label>
+                        <select id="workdesignation" name="workdesignation[0]" required class="workdesignation form-control">
                             <option></option>
                             @foreach($designations as $designation)
+                            <option value="{{ $designation->id }}">{{$designation->title}}</option>
+                            @endforeach
+                        </select>
+                      </div>
+
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form" style="display:none;">
+                        <label for="workdepartment">Department (Non-Academic)</label>
+                        <select id="workdepartment_non_academic" name="workdepartment_non_academic[0]" class="workdepartment_non_academic form-control">
+                            <option></option>
+                            @foreach($non_academic_departments as $department)
+                            <option value="{{ $department->id }}">{{$department->departmentname}}</option>
+                            @endforeach
+                          </select>
+                      </div>
+
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form" style="display:none;">
+                        <label for="workdesignation">Designation (Non-Academic)</label>
+                        <select id="workdesignation_non_academic" name="workdesignation_non_academic[0]" class="workdesignation_non_academic form-control">
+                            <option></option>
+                            @foreach($non_academic_designations as $designation)
                             <option value="{{ $designation->id }}">{{$designation->title}}</option>
                             @endforeach
                         </select>
@@ -1738,8 +1801,8 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                     </select>
                       </div>
                         
-                    </div>
-                    <div class="row">
+                    <!-- </div>
+                    <div class="row"> -->
                       <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
                         <label for="workstep">Step</label>
                         <!-- <input
@@ -1849,19 +1912,43 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                     </div>\
                     <div class="row">\
                     <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">\
-                        <label for="workdepartment">Department</label>\
-                        <select id="workdepartment" name="workdepartment[' + i + ']" class="workdepartment required form-control">\
-                            <option></option>\
+                        <label for="category_unit_work_experience'+ i +'">Category</label>\
+                        <select id="category_unit_work_experience'+ i +'" data-id="'+ i +'" name="category_unit_work_experience[' + i + ']" class="required form-control category_unit_work_experience">\
+                             @if (isset($unit->category)) disabled @endif>\
+                                <option {{ isset($unit->category) && $unit->category == 'Academic' ? 'selected' : '' }} value="Academic">Academic</option>\
+                                <option {{ isset($unit->category) && $unit->category == 'Non-Academic' ? 'selected' : '' }} value="Non-Academic">Non-Academic</option>\
+                          </select>\
+                      </div>\
+                    <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form'+ i +'">\
+                        <label for="workdepartment">Department (Academic)</label>\
+                        <select id="workdepartment'+ i +'" name="workdepartment[' + i + ']" required class="workdepartment form-control">\
                             @foreach($departments as $department)\
                             <option value="{{ $department->id }}">{{$department->departmentname}}</option>\
                             @endforeach\
                           </select>\
                       </div>\
-                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">\
-                        <label for="workdesignation">Designation</label>\
-                        <select id="workdesignation" name="workdesignation[' + i + ']" class="workdesignation required form-control">\
-                            <option></option>\
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_academic_form'+ i +'">\
+                        <label for="workdesignation">Designation (Academic)</label>\
+                        <select id="workdesignation'+ i +'" name="workdesignation[' + i + ']" required class="workdesignation form-control">\
                             @foreach($designations as $designation)\
+                            <option value="{{ $designation->id }}">{{$designation->title}}</option>\
+                            @endforeach\
+                        </select>\
+                      </div>\
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form'+ i +'" style="display:none">\
+                        <label for="workdepartment_non_academic'+ i +'">Department (Non-Academic)</label>\
+                        <select id="workdepartment_non_academic'+ i +'" name="workdepartment_non_academic[' + i + ']" class="workdepartment_non_academic form-control">\
+                            <option></option>\
+                            @foreach($non_academic_departments as $department)\
+                            <option value="{{ $department->id }}">{{$department->departmentname}}</option>\
+                            @endforeach\
+                          </select>\
+                      </div>\
+                      <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group work_experience_non_academic_form'+ i +'" style="display:none">\
+                        <label for="workdesignation_non_academic'+ i +'">Designation (Non-Academic)</label>\
+                        <select id="workdesignation_non_academic'+ i +'" name="workdesignation_non_academic[' + i + ']" class="workdesignation_non_academic form-control">\
+                            <option></option>\
+                            @foreach($division as $designation)\
                             <option value="{{ $designation->id }}">{{$designation->title}}</option>\
                             @endforeach\
                         </select>\
@@ -1902,8 +1989,6 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                       <option {{ ( isset($workdatas->workgradelevel) && ( $workdatas->workgradelevel == 'other' ) ? 'selected' : '')}} value="other">Other</option>\
                     </select>\
                       </div>\
-                    </div>\
-                    <div class="row">\
                     <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">\
                         <label for="workstep">Step</label>\
                         <select class="js-example-basic-single" name="workstep[' + i + ']">\
@@ -2033,6 +2118,10 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                 $('.workdepartment').select2();
                   return false;
                 });
+                $('.workdepartment_non_academic').select2();
+                $('.workdesignation_non_academic').select2();
+
+
 
                 jQuery(document).on('click', '.remove_this2', function() {
                 jQuery(this).parent().parent().remove();
@@ -3786,22 +3875,16 @@ $('#department-dropdown').on('change', function() {
                 if (category_unit == 'Academic') {
                     $('.academic_form').css('display', 'block');
                     $('.non_academic_form').css('display', 'none');
-
                     $('#directorate-dropdown').attr('required', true);
                     $('#department-dropdown').attr('required', true);
                     $('#designation').attr('required', true);
                     $('#unit-dropdown').attr('required', true);
                     $('#role').attr('required', true);
-
-
-
                     $('#department_non_Academic').attr('required', false);
                     $('#division_non_Academic').attr('required', false);
                     $('#role_non_Academic').attr('required', false);
                     $('#designation_non_Academic').attr('required', false);
                     $('#unit_non_Academic').attr('required', false);
-
-
 
                 } else {
                     $('.academic_form').css('display', 'none');
@@ -3813,16 +3896,11 @@ $('#department-dropdown').on('change', function() {
                     $('#unit-dropdown').attr('required', false);
                     $('#role').attr('required', false);
 
-
-
                     $('#department_non_Academic').attr('required', true);
                     $('#division_non_Academic').attr('required', true);
                     $('#role_non_Academic').attr('required', true);
                     $('#designation_non_Academic').attr('required', true);
                     $('#unit_non_Academic').attr('required', true);
-
-
-
 
                 }
 
@@ -3882,7 +3960,6 @@ $('#department-dropdown').on('change', function() {
 
 $('#department_non_Academic').on('change', function() {
   var directorate_id = this.value;  
-  alert(directorate_id);
   $("#division_non_Academic").html('');
   $.ajax({
     url: "{{url('employee/division')}}",
@@ -3929,6 +4006,104 @@ $('#division_non_Academic').on('change', function() {
       });
     });
 
+    $(document).on('change', '.category_unit_work_experience', function() {
+    // $('.category_unit_work_experience').on('change', function() {
+                var category_unit = $(this).val();
+                 var id = $(this).data('id');
+                 if (id > 0) {
+                      if (category_unit == 'Academic') {
+                        $(".work_experience_academic_form" + id).css('display', 'block');
+                        $('.work_experience_non_academic_form' + id).css('display', 'none');
+
+                        $('#workdepartment' + id).attr('required', true);
+                        $('#workdesignation' + id).attr('required', true);
+                    
+
+                        $('#workdepartment_non_academic' + id).attr('required', false);
+                        $('#workdesignation_non_academic' + id).attr('required', false);
+
+
+                    } else {
+                        $('.work_experience_academic_form' + id).css('display', 'none');
+                        $('.work_experience_non_academic_form' + id).css('display', 'block');
+
+                        $('#workdepartment' + id).attr('required', false);
+                        $('#workdesignation' + id).attr('required', false);
+            
+
+                        $('#workdepartment_non_academic' + id).attr('required', true);
+                        $('#workdesignation_non_academic' + id).attr('required', true);
+                
+                    }
+                  
+                 }else{
+                      if (category_unit == 'Academic') {
+                        $('.work_experience_academic_form').css('display', 'block');
+                        $('.work_experience_non_academic_form').css('display', 'none');
+
+                        $('#workdepartment').attr('required', true);
+                        $('#workdesignation').attr('required', true);
+                    
+
+                        $('#workdepartment_non_academic').attr('required', false);
+                        $('#workdesignation_non_academic').attr('required', false);
+
+
+                    } else {
+                        $('.work_experience_academic_form').css('display', 'none');
+                        $('.work_experience_non_academic_form').css('display', 'block');
+
+                        $('#workdepartment').attr('required', false);
+                        $('#workdesignation').attr('required', false);
+            
+
+                        $('#workdepartment_non_academic').attr('required', true);
+                        $('#workdesignation_non_academic').attr('required', true);
+                
+                    }
+
+                 }
+ 
+    });
+
+            if ($('#category_unit').val()) {
+                set_academic($('#category_unit').val());
+
+            }
+
+            function set_academic(category_unit) {
+              if (category_unit == 'Academic') {
+                    $('.academic_form').css('display', 'block');
+                    $('.non_academic_form').css('display', 'none');
+                    $('#directorate-dropdown').attr('required', true);
+                    $('#department-dropdown').attr('required', true);
+                    $('#designation').attr('required', true);
+                    $('#unit-dropdown').attr('required', true);
+                    $('#role').attr('required', true);
+                    $('#department_non_Academic').attr('required', false);
+                    $('#division_non_Academic').attr('required', false);
+                    $('#role_non_Academic').attr('required', false);
+                    $('#designation_non_Academic').attr('required', false);
+                    $('#unit_non_Academic').attr('required', false);
+
+                } else {
+                    $('.academic_form').css('display', 'none');
+                    $('.non_academic_form').css('display', 'block');
+
+                    $('#directorate-dropdown').attr('required', false);
+                    $('#department-dropdown').attr('required', false);
+                    $('#designation').attr('required', false);
+                    $('#unit-dropdown').attr('required', false);
+                    $('#role').attr('required', false);
+
+                    $('#department_non_Academic').attr('required', true);
+                    $('#division_non_Academic').attr('required', true);
+                    $('#role_non_Academic').attr('required', true);
+                    $('#designation_non_Academic').attr('required', true);
+                    $('#unit_non_Academic').attr('required', true);
+
+                }
+            }
 
 
 </script>

@@ -57,43 +57,58 @@ class LoginController extends Controller
 
         $credentials = $request->only('email', 'password');
         $user_data = User::where('email',$input['email'])->first();
-        //dd(Auth::email());
-        if(isset( $user_data->email ) && $user_data->email == $input['email'] &&  $user_data->status != 0) {
-            if (Auth::attempt($credentials) ) {
-                if (in_array(Auth::user()->is_school, [1,2])) {
-                   return redirect()->intended('/institute/home')
-                            ->withSuccess('Signed in');
-                }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['Employee'])) {
-                   return redirect()->intended('emp_dashboard/employeehome')
-                            ->withSuccess('Signed in');
-                }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOD'])) {
-                   return redirect()->intended('emp_dashboard/employeehome')
-                            ->withSuccess('Signed in');
-                }
-                // elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['Dean'])) {
-                //    return redirect()->intended('emp_dashboard/employeehome')
-                //             ->withSuccess('Signed in');
-                // }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['Rector'])) {
-                //    return redirect()->intended('emp_dashboard/employeehome')
-                //             ->withSuccess('Signed in');
-                elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOU'])) {
-                    return redirect()->intended('emp_dashboard/employeehome')
-                             ->withSuccess('Signed in');
-                 }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOF'])) {
-                    return redirect()->intended('emp_dashboard/employeehome')
-                             ->withSuccess('Signed in');
-                }else {
-                    return redirect()->intended('/admin/home')
-                            ->withSuccess('Signed in');
-                }
+
+        if($user_data->category == 'Non-Academic'){
+          if(isset( $user_data->email ) && $user_data->email == $input['email'] &&  $user_data->status != 0){
+            if(Auth::attempt($credentials)){
+                return redirect()->intended('emp_dashboard/employeehome')
+                ->withSuccess('Signed in');
             }else{
                 return redirect('login')
-                    ->with('error','Email-Address And Password Are Wrong.');
+                ->with('error','Email-Address And Password Are Wrong.');
             }
+
+          }else{
+            return redirect('login')
+                        ->with('error','You do not have login access.');
+          }
+
+        }else{
+            if(isset( $user_data->email ) && $user_data->email == $input['email'] &&  $user_data->status != 0) {
+                if (Auth::attempt($credentials) ) {
+                    if (in_array(Auth::user()->is_school, [1,2])) {
+                       return redirect()->intended('/institute/home')
+                                ->withSuccess('Signed in');
+                    }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['Employee'])) {
+                       return redirect()->intended('emp_dashboard/employeehome')
+                                ->withSuccess('Signed in');
+                    }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOD'])) {
+                       return redirect()->intended('emp_dashboard/employeehome')
+                                ->withSuccess('Signed in');
+                    }
+                    elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOU'])) {
+                        return redirect()->intended('emp_dashboard/employeehome')
+                                 ->withSuccess('Signed in');
+                     }elseif (in_array(Auth::user()->is_school, [3]) && in_array(Auth::user()->role, ['HOF'])) {
+                        return redirect()->intended('emp_dashboard/employeehome')
+                                 ->withSuccess('Signed in');
+                    }else {
+                        return redirect()->intended('/admin/home')
+                                ->withSuccess('Signed in');
+                    }
+                }else{
+                    return redirect('login')
+                        ->with('error','Email-Address And Password Are Wrong.');
+                }
+            }
+            else{
+                    return redirect('login')
+                        ->with('error','You do not have login access.');
+                }
+
         }
-        else{
-                return redirect('login')
-                    ->with('error','You do not have login access.');
-            }
+
+        //dd(Auth::email());
+   
     }
 }

@@ -22,7 +22,8 @@ class WorkExperience extends Model
      'workstep',
      'workcadre',
      'employee_id',
-     'user_id'
+     'user_id',
+     'category'
     ];
      public function employee_detail()
   {

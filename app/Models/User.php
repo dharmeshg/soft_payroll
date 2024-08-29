@@ -48,7 +48,8 @@ class User extends Authenticatable
         'institutionlocationcountry',
         'schoolname',
         'role',
-        'websiteaddress'
+        'websiteaddress',
+        'category'
     ];
 
     /**

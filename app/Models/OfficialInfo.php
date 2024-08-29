@@ -29,7 +29,12 @@ class OfficialInfo extends Model
       'officialinfoother',
       'role',
       'expectedretirementdate',
-      'unit'
+      'unit',
+      'non_Academic_department',
+      'non_Academic_division',
+      'non_Academic_designation',
+      'non_Academic_unit',
+      'non_Academic_role'
     ];
 
   public function employee_detail()
@@ -58,6 +63,16 @@ class OfficialInfo extends Model
     public function designations()
     {
         return $this->belongsTo(Designation::class, 'designation');
+    }
+
+    public function non_academic_departments_dt()
+    {
+        return $this->belongsTo(NonAcademicsDepartment::class, 'non_Academic_department');
+    }
+
+    public function non_academic_designations()
+    {
+        return $this->belongsTo(NonAcademicsDesignation::class, 'non_Academic_designation');
     }
     
 

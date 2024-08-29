@@ -268,17 +268,23 @@ div.dt-button-collection{
                           <th>Service Years</th>
                           <th>Blood Group</th>
                           <th>Staff ID</th>
-                          <th>Department</th>                          
+                          <th>Department (Academic)</th>  
+                          <th>Department (Non-Academic)</th>                          
                           <th>Date of Employment</th>
                           <th>Email</th>
-                          <th>Designation</th>                          
+                          <th>Designation (Academic)</th>  
+                          <th>Designation (Non-Academic)</th>                          
                           <th>Contact No</th>
+                          <th>Roll</th>
+                          <th>Category</th>
+
                           <th></th>
                         </tr>
                       </thead>
                       <tbody>
                          @if($data)
                          @foreach($data as $key=>$Employee)
+
                          <?php
                          // echo "<pre>" ;
                          // echo $Employee;
@@ -300,12 +306,19 @@ div.dt-button-collection{
                             <td><?php echo $diff->format('%y'); ?></td>
                             <td>{{$Employee->bloodgroup}}</td>
                             <td>@if(isset($Employee->official_information)){{$Employee->official_information->staff_id}}@endif</td>
-                            <td>@if(isset($Employee->official_information)){{$Employee->official_information->departments_dt->departmentname}}@endif</td>
+                            <td>@if(isset($Employee->official_information) && $Employee->official_information->department != null){{$Employee->official_information->departments_dt->departmentname}}@else - @endif</td>
+                            <td>@if(isset($Employee->official_information) && $Employee->official_information->non_Academic_department != null){{$Employee->official_information->non_academic_departments_dt->departmentname}}@else - @endif</td>
+
                             <td>@if(isset($Employee->official_information)){{$Employee->official_information->dateofemployment->format('d/m/Y'), ''}}@endif</td>
                             <td>@if(isset($Employee->employeeemail)){{$Employee->employeeemail}}@endif</td>
                            
-                            <td>@if(isset($Employee->official_information)){{$Employee->official_information->designations->title}}@endif</td>
+                            <td>@if(isset($Employee->official_information) && $Employee->official_information->designation != null){{$Employee->official_information->designations->title}} @else - @endif</td>
+                            <td>@if(isset($Employee->official_information) && $Employee->official_information->non_Academic_designation != null){{$Employee->official_information->non_academic_designations->title}} @else - @endif</td>
+
                             <td>{{$Employee->phoneno}}</td>
+                            <td>{{ isset($Employee->official_information->role) ? $Employee->official_information->role : $Employee->official_information->non_Academic_role  }}</td>
+                            <td>{{$Employee->official_information->category}}</td>
+
                             
                             <td>
                             <input type="checkbox" class="toggle" id="rounded{{ $Employee->id }}" data-employeeid="{{ $Employee->id }}" {{ ( ( $Employee->status == 1 ) ? 'checked' : '' ) }}>

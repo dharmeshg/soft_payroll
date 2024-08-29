@@ -175,7 +175,6 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
         $validatedData = $request->validate([
             'password'=>'required|min:8'
         ]);
@@ -266,10 +265,27 @@ class EmployeeController extends Controller
             $official_info->staff_id = date('Y') . '' . $new_so_number;
         }
         //dd($official_info->staff_id);
+        $official_info->category = $request['category_unit'];
 
-        $official_info->directorate = $request['directorate'];
-        $official_info->department = $request['department'];
-        $official_info->designation = $request['designation'];
+
+        if($request['category_unit'] == 'Non-Academic'){
+            $official_info->non_Academic_department = $request['department_non_Academic'];
+            $official_info->non_Academic_division = $request['division_non_Academic'];
+            $official_info->non_Academic_designation = $request['designation_non_Academic'];
+            $official_info->non_Academic_unit = $request['unit_non_Academic'];
+            $official_info->non_Academic_role = $request['role_non_Academic'];
+
+        }else{
+            $official_info->directorate = $request['directorate'];
+            $official_info->department = $request['department'];
+            $official_info->designation = $request['designation'];
+            $official_info->unit = $request['unit'];
+            $official_info->role = $request['role'];
+        }
+
+    
+
+
         $official_info->cadre = $request['cadre'];
         $official_info->highestqualification = $request['highestqualification'];
         $official_info->gradelevel = $request['gradelevel'];
@@ -277,10 +293,8 @@ class EmployeeController extends Controller
         $official_info->areaofstudy = $request['areaofstudy'];
         $official_info->dateofemployment = Carbon::createFromFormat('d/m/Y', $request['dateofemployment'])->toDateTimeString();
         $official_info->expectedretirementdate = $request['expectedretirementdate'];
-        $official_info->unit = $request['unit'];
         $official_info->typeofemployment = $request['typeofemployment'];
         $official_info->officialinfoother = $request['officialinfoother'];
-        $official_info->role = $request['role'];
         $official_info->reporting_employee_id = $request['reporting_employee_id'];
         $official_info->user_id = Auth::user()->id;
         $official_info->save();
@@ -348,6 +362,19 @@ class EmployeeController extends Controller
         $work_experience->employee_id = $emp_id;
         $work_experience->user_id = Auth::user()->id;
         foreach ($request->workinstitutionname as  $key => $value) {
+            if($request->category_unit_work_experience[$key] == 'Non-Academic'){
+                $workdepartment = '';
+                $workdesignation = '';
+                $non_academic_workdepartment = $request->workdepartment_non_academic[$key];
+                $non_academic_workdesignation = $request->workdepartment_non_academic[$key];
+
+            }else{
+                $non_academic_workdepartment = '';
+                $non_academic_workdesignation = '';
+                $workdepartment = $request->workdepartment[$key];
+                $workdesignation = $request->workdesignation[$key];
+            }
+
             $data = array(
                 'user_id' => Auth::user()->id,
                 'employee_id' => $emp_id,
@@ -355,8 +382,11 @@ class EmployeeController extends Controller
                 'workstartdate' => $request->workstartdate[$key],
                 'workenddate' => $request->workenddate[$key],
                 'workduration' => $request->workduration[$key],
-                'workdepartment' => $request->workdepartment[$key],
-                'workdesignation' => $request->workdesignation[$key],
+                'category' => $request->category_unit_work_experience[$key],
+                'workdepartment' => $workdepartment,
+                'workdesignation' => $workdesignation,
+                'non_academic_workdepartment' => $non_academic_workdepartment,
+                'non_academic_workdesignation' => $non_academic_workdesignation,
                 'workpostheld' => $request->workpostheld[$key],
                 'workgradelevel' => $request->workgradelevel[$key],
                 'workstep' => $request->workstep[$key],
@@ -416,7 +446,14 @@ class EmployeeController extends Controller
                 $datauser['is_school'] = $request['is_school'];
                 $datauser['email'] = $request['employeeemail'];
                 $datauser['password'] = Hash::make($request['password']);
-                $datauser['role'] = $request['role'];
+                if($request['category_unit'] == 'Non-Academic'){
+                    $datauser['role'] = $request['role_non_Academic'];
+                }else{
+                    $datauser['role'] = $request['role'];
+                }
+                
+                $datauser['category'] = $request['category_unit'];
+
                 $Employeeuser = $Employeeuser->create($datauser);
 
                 $employee_dt = Employee::findOrFail($emp_id);
@@ -525,9 +562,14 @@ class EmployeeController extends Controller
         $states = State::get();
         $stateoforigins = StateOrigin::get();
 
+        $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+        $division = Division::where('user_id','=',Auth::user()->id)->get();
+        $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+        $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+
         // dd($employee->official_information);
 
-        return view('employee/add1', compact('employee', 'id', 'acadamicdata', 'workdata', 'refeedata', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'kin_details', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data'));
+        return view('employee/add1', compact('employee', 'id', 'acadamicdata', 'workdata', 'refeedata', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'kin_details', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data','non_academic_departments','division','non_academic_units','non_academic_designations'));
     }
 
     public function update(Request $request, $id)
@@ -595,6 +637,24 @@ class EmployeeController extends Controller
         $Employee->update();
 
         $official_infos = OfficialInfo::where('employee_id', '=', $id)->first();
+
+        $official_infos->category = $request['category_unit'];
+
+
+        if($request['category_unit'] == 'Non-Academic'){
+            $official_infos->non_Academic_department = $request['department_non_Academic'];
+            $official_infos->non_Academic_division = $request['division_non_Academic'];
+            $official_infos->non_Academic_designation = $request['designation_non_Academic'];
+            $official_infos->non_Academic_unit = $request['unit_non_Academic'];
+            $official_infos->non_Academic_role = $request['role_non_Academic'];
+
+        }else{
+            $official_infos->directorate = $request['directorate'];
+            $official_infos->department = $request['department'];
+            $official_infos->designation = $request['designation'];
+            $official_infos->unit = $request['unit'];
+            $official_infos->role = $request['role'];
+        }
         $official_infos->directorate = $request['directorate'];
         $official_infos->department = $request['department'];
         $official_infos->designation = $request['designation'];
@@ -743,6 +803,18 @@ class EmployeeController extends Controller
         }
                   
         foreach ($request->workinstitutionname as  $key => $value) {
+            if($request->category_unit_work_experience[$key] == 'Non-Academic'){
+                $workdepartment = '';
+                $workdesignation = '';
+                $non_academic_workdepartment = $request->workdepartment_non_academic[$key];
+                $non_academic_workdesignation = $request->workdepartment_non_academic[$key];
+
+            }else{
+                $non_academic_workdepartment = '';
+                $non_academic_workdesignation = '';
+                $workdepartment = $request->workdepartment[$key];
+                $workdesignation = $request->workdesignation[$key];
+            }
             if (isset($request->work_id[$key])) {
                 $acd_id = $request->work_id[$key];
             }          
@@ -756,8 +828,10 @@ class EmployeeController extends Controller
                     'workstartdate' => $request->workstartdate[$key],
                     'workenddate' => $request->workenddate[$key],
                     'workduration' => $request->workduration[$key],
-                    'workdepartment' => $request->workdepartment[$key],
-                    'workdesignation' => $request->workdesignation[$key],
+                    'workdepartment' => $workdepartment,
+                    'workdesignation' => $workdesignation,
+                    'non_academic_workdepartment' => $non_academic_workdepartment,
+                    'non_academic_workdesignation' => $non_academic_workdesignation,
                     'workpostheld' => $request->workpostheld[$key],
                     'workgradelevel' => $request->workgradelevel[$key],
                     'workstep' => $request->workstep[$key],
@@ -774,8 +848,10 @@ class EmployeeController extends Controller
                     'workstartdate' => $request->workstartdate[$key],
                     'workenddate' => $request->workenddate[$key],
                     'workduration' => $request->workduration[$key],
-                    'workdepartment' => $request->workdepartment[$key],
-                    'workdesignation' => $request->workdesignation[$key],
+                    'workdepartment' => $workdepartment,
+                    'workdesignation' => $workdesignation,
+                    'non_academic_workdepartment' => $non_academic_workdepartment,
+                    'non_academic_workdesignation' => $non_academic_workdesignation,
                     'workpostheld' => $request->workpostheld[$key],
                     'workgradelevel' => $request->workgradelevel[$key],
                     'workstep' => $request->workstep[$key],
@@ -864,6 +940,11 @@ class EmployeeController extends Controller
                 
                 $userUpdate= User::where('id',$empUpdate->user_id)->first();
                 $userUpdate->email = $request['employeeemail'];
+                if($request['category_unit'] == 'Non-Academic'){
+                    $userUpdate->role = $request['role_non_Academic'];
+                }else{
+                    $userUpdate->role = $request['role'];
+                }
                 if(isset($request['password']) && $request['password'] != ''){
                     $userUpdate->password = Hash::make($request['password']);
                 }
