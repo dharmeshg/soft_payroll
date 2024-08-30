@@ -24,7 +24,11 @@ class DivisionController extends Controller
 
     public function index()
     {
+        // dd(Auth::user()->employee->official_information->non_Academic_department);
         $Department = Division::where('user_id', '=', Auth::user()->id)->get();
+        if(Auth::user()->category == 'Non-Academic' && Auth::user()->role == 'HOD'){
+            $Department = Division::where('user_id', '=', Auth::user()->employee->institution_id)->where('faculty_id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+        }
         // if (Auth::user()->is_school == 3) {
         //     $Department = Division::where('user_id', '=', Auth::user()->employee->institution_id)->get();
         // }
@@ -32,8 +36,10 @@ class DivisionController extends Controller
     }
     public function add()
     {
-        $Department = NonAcademicsDepartment::all();
-        $faculty = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        $faculty = NonAcademicsDepartment::all();
+        if(Auth::user()->category == 'Non-Academic' && Auth::user()->role == 'HOD'){
+           $faculty = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+        }
 
         return view('division/add', compact('faculty'));
     }
@@ -51,12 +57,18 @@ class DivisionController extends Controller
         //     return back()->with('erorr', 'Profile Not Updated');
         // }
 
+
         $department = new Division();
         $department->departmentname = $request['departmentname'];
         $department->departmentdescription = $request['departmentdescription'];
         $department->faculty_id = $request['directorate'];
         // $department->image = $filename;
-        $department->user_id = Auth::user()->id;
+        if(Auth::user()->category == 'Non-Academic' && Auth::user()->role == 'HOD'){
+            $department->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $department->user_id = Auth::user()->id;
+        }
+        
         $department->save();
 
         if ($department)
@@ -68,7 +80,13 @@ class DivisionController extends Controller
     public function edit($id)
     {
         $Department = Division::findOrFail($id);
-        $faculty = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        
+        if(Auth::user()->category == 'Non-Academic' && Auth::user()->role == 'HOD'){
+           $faculty = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+        }else{
+            $faculty = NonAcademicsDepartment::all();
+        }
+        // $faculty = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
 
         return view('division/add', compact('Department', 'id', 'faculty'));
     }

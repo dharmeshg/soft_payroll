@@ -504,12 +504,12 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                   </div>
                   <div class="col-xxl-3 col-xl-3 col-lg-3 col-md-6 col-sm-12 col-12 form-group">
                     <label for="staff_id">Category</label>
-                    <select class="category_unit" name="category_unit" id="category_unit">
+                    <select class="category_unit" name="category_unit" id="category_unit" @if (isset($employee->official_information->category) || Auth::user()->category != '') disabled @endif>
                                         <option
-                                            {{ isset($employee->official_information->category) && $employee->official_information->category == 'Academic' ? 'selected' : '' }}
+                                            {{ (isset($employee->official_information->category) && $employee->official_information->category) || Auth::user()->category == 'Academic' ? 'selected' : '' }}
                                             value="Academic">Academic</option>
                                         <option
-                                            {{ isset($employee->official_information->category) && $employee->official_information->category == 'Non-Academic' ? 'selected' : '' }}
+                                            {{ (isset($employee->official_information->category) && $employee->official_information->category) || Auth::user()->category == 'Non-Academic' ? 'selected' : '' }}
                                             value="Non-Academic">Non-Academic</option>
                                     </select>
                   </div>
@@ -560,10 +560,17 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                     <label for="role">Role/Post Held (Non-Academic)</label>
                     <select class="js-example-basic-single" name="role_non_Academic" id="role_non_Academic">
                       <option></option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
+                      @if(Auth::user()->category == '')
+                        <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
+                      @endif
+                      @if(Auth::user()->category == '' || Auth::user()->role == 'HOD')
+                        <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HODV' ) ? 'selected' : '')}} value="HODV">HODV</option>
+                      @endif
+                      @if(Auth::user()->category == '' || Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')
+                        <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
+                      @endif
                       <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'Employee' ) ? 'selected' : '')}} value="Employee">Employee</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->non_Academic_role == 'HODV' ) ? 'selected' : '')}} value="HODV">HODV</option>
+                      
                     </select>
                   </div>
 
@@ -571,10 +578,17 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                     <label for="role">Role/Post Held (Academic)</label>
                     <select class="js-example-basic-single" required name="role" id="role">
                       <option></option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
+                      @if(Auth::user()->category == '')
+                        <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOF' ) ? 'selected' : '')}} value="HOF">HOS</option>
+                      @endif
+                      @if(Auth::user()->category == '' || Auth::user()->role == 'HOF')
+                         <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOD' ) ? 'selected' : '')}} value="HOD">HOD</option>
+                      @endif
+                      @if(Auth::user()->category == '' || Auth::user()->role == 'HOF' || Auth::user()->role == 'HOD')
+                         <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
+                      @endif
                       <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'Employee' ) ? 'selected' : '')}} value="Employee">Employee</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOU' ) ? 'selected' : '')}} value="HOU">HOU</option>
-                      <option {{ ( isset($employee->official_information) && ( $employee->official_information->role == 'HOF' ) ? 'selected' : '')}} value="HOF">HOS</option>
+                      
                     </select>
                   </div>
              
@@ -1557,7 +1571,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdepartment">Department (Non-Academic)</label>
                         <select id="workdepartment_non_academic" name="workdepartment_non_academic[0]" class="workdepartment_non_academic form-control">
                           
-                            @foreach($non_academic_departments as $department)
+                            @foreach($work_non_academic_departments as $department)
                             <option value="{{ $department->id }}">{{$department->departmentname}}</option>
                             @endforeach
                           </select>
@@ -1567,7 +1581,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdesignation">Designation (Non-Academic)</label>
                         <select id="workdesignation_non_academic" name="workdesignation_non_academic[0]" class="workdesignation_non_academic form-control">
                        
-                            @foreach($non_academic_designations as $designation)
+                            @foreach($work_non_academic_designations as $designation)
                             <option value="{{ $designation->id }}">{{$designation->title}}</option>
                             @endforeach
                         </select>
@@ -1743,7 +1757,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdepartment">Department (Non-Academic)</label>
                         <select id="workdepartment_non_academic" name="workdepartment_non_academic[0]" class="workdepartment_non_academic form-control">
                             <option></option>
-                            @foreach($non_academic_departments as $department)
+                            @foreach($work_non_academic_departments as $department)
                             <option value="{{ $department->id }}">{{$department->departmentname}}</option>
                             @endforeach
                           </select>
@@ -1753,7 +1767,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdesignation">Designation (Non-Academic)</label>
                         <select id="workdesignation_non_academic" name="workdesignation_non_academic[0]" class="workdesignation_non_academic form-control">
                             <option></option>
-                            @foreach($non_academic_designations as $designation)
+                            @foreach($work_non_academic_designations as $designation)
                             <option value="{{ $designation->id }}">{{$designation->title}}</option>
                             @endforeach
                         </select>
@@ -1939,7 +1953,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdepartment_non_academic'+ i +'">Department (Non-Academic)</label>\
                         <select id="workdepartment_non_academic'+ i +'" name="workdepartment_non_academic[' + i + ']" class="workdepartment_non_academic form-control">\
                             <option></option>\
-                            @foreach($non_academic_departments as $department)\
+                            @foreach($work_non_academic_departments as $department)\
                             <option value="{{ $department->id }}">{{$department->departmentname}}</option>\
                             @endforeach\
                           </select>\
@@ -1948,7 +1962,7 @@ a.docpreview { color: #3e5569; font-size: 16px; line-height: 40px; }
                         <label for="workdesignation_non_academic'+ i +'">Designation (Non-Academic)</label>\
                         <select id="workdesignation_non_academic'+ i +'" name="workdesignation_non_academic[' + i + ']" class="workdesignation_non_academic form-control">\
                             <option></option>\
-                            @foreach($division as $designation)\
+                            @foreach($work_non_academic_designations as $designation)\
                             <option value="{{ $designation->id }}">{{$designation->title}}</option>\
                             @endforeach\
                         </select>\
@@ -4005,6 +4019,10 @@ $('#division_non_Academic').on('change', function() {
         }
       });
     });
+    
+   
+
+
 
     $(document).on('change', '.category_unit_work_experience', function() {
     // $('.category_unit_work_experience').on('change', function() {
@@ -4065,6 +4083,28 @@ $('#division_non_Academic').on('change', function() {
                  }
  
     });
+        // if($('#department_non_Academic').val()){
+        //   var directorate_id = $('#department_non_Academic').val() 
+        //   $("#division_non_Academic").html('');
+        //   $.ajax({
+        //     url: "{{url('employee/division')}}",
+        //     type: "POST",
+        //     data: {
+        //       directorate_id: directorate_id,
+        //       _token: '{{csrf_token()}}'
+        //     },
+        //     dataType: 'json',
+
+        //     success: function(result) {         
+        //       $('#division_non_Academic').html('<option value="">Select Division</option>');          
+        //       $.each(result.departmentname, function(key, value) {
+        //         $("#division_non_Academic").append('<option value="' + value.id + '">' + value.departmentname + '</option>');
+        //       });
+        //       $('#unit_non_Academic').html('<option value="">Select Unit</option>');
+        //     }
+        //   });
+
+        // }
 
             if ($('#category_unit').val()) {
                 set_academic($('#category_unit').val());

@@ -86,18 +86,29 @@ class NonAcademicUnitController extends Controller
 
     public function index()
     {
-        $data = NonAcademicUnit::where('user_id', '=', Auth::user()->id)->get();
-        if (Auth::user()->is_school == 3) {
-            $data = NonAcademicUnit::where('user_id', '=', Auth::user()->employee->institution_id)->get();
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $data = NonAcademicUnit::where('user_id', '=', Auth::user()->employee->institution_id)->where('faculty_id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+
+        }else{
+            $data = NonAcademicUnit::where('user_id', '=', Auth::user()->id)->get();
         }
+        
+        // if (Auth::user()->is_school == 3) {
+        //     $data = NonAcademicUnit::where('user_id', '=', Auth::user()->employee->institution_id)->get();
+        // }
         return view('/unit/non_academic_index', ['data' => $data]);
     }
 
     public function edit($id)
     {
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $nonAcademicDepartment = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+
+        }else{
+            $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        }
         $faculty = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
         $unit = NonAcademicUnit::findOrFail($id);
-        $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
         $division = Division::get();
         $unit['category'] = 'Non-Academic';
         return view('/unit/add', compact('unit', 'id', 'faculty', 'nonAcademicDepartment', 'division'));

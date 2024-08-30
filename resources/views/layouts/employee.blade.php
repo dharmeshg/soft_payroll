@@ -85,6 +85,9 @@
             <div class="lds-pos"></div>
         </div>
     </div>
+
+
+ 
     <div id="main-wrapper" data-layout="vertical" data-navbarbg="skin5" data-sidebartype="full"
         data-sidebar-position="absolute" data-header-position="absolute" data-boxed-layout="full">
         <!-- ============================================================== -->
@@ -460,246 +463,8 @@
                   ?> aria-expanded="false"><i class="mdi mdi-view-dashboard"></i><span
                                     class="hide-menu">Dashboard</span></a>
                         </li>
-                        @if (Auth::user()->is_school == 3 && Auth::user()->role == 'Employee')
-                            <li class="sidebar-item">
-                                <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                                    aria-expanded="false"><i class="mdi mdi-account-circle"></i><span
-                                        class="hide-menu">Transfer Initiation Form</span></a>
-                                <ul aria-expanded="false" class="collapse first-level">
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Transfer Initiation Form </span></a>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            @if (permission_employee() != null)
-                                <li class="sidebar-item">
-                                    <a class="sidebar-link has-arrow waves-effect waves-dark"
-                                        href="javascript:void(0)" aria-expanded="false"><i
-                                            class="mdi mdi-cart"></i><span class="hide-menu">Leave
-                                            Management</span></a>
-                                    <ul aria-expanded="false" class="collapse first-level">
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 4)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('employee.leave.request') }}"
-                                                        class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Apply Leave</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 5)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('LeaveBalanceview') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-scale-balance"></i><span
-                                                            class="hide-menu">Leave Balance</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 6)
-                                                <li class="sidebar-item">
-                                                    <a href="javascript:void(0)" class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Leave Requests</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @endif
-                        @elseif(Auth::user()->is_school == 3 && Auth::user()->role == 'HOU')
-                            <li class="sidebar-item">
-                                <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                                    aria-expanded="false"><i class="mdi mdi-account-circle"></i><span
-                                        class="hide-menu">Transfer Initiation Form</span></a>
-                                <ul aria-expanded="false" class="collapse first-level">
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.other') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon"></i><span class="hide-menu">Transfer
-                                                Form(Others)</span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Transfer Initiation Form </span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('authorizetransfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Authorized Transfer Request</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            @if (permission_employee() != null)
-                                <li class="sidebar-item">
-                                    <a class="sidebar-link has-arrow waves-effect waves-dark"
-                                        href="javascript:void(0)" aria-expanded="false"><i
-                                            class="mdi mdi-cart"></i><span class="hide-menu">Leave
-                                            Management</span></a>
-                                    <ul aria-expanded="false" class="collapse first-level">
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 4)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('employee.leave.request') }}"
-                                                        class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Apply Leave</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 5)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('LeaveBalanceview') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-scale-balance"></i><span
-                                                            class="hide-menu">Leave Balance</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 6)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('HOULeave.index') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Leave Requests</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @endif
-                        @elseif(Auth::user()->is_school == 3 && Auth::user()->role == 'HOD')
-                            <li class="sidebar-item">
-                                <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                                    aria-expanded="false"><i class="mdi mdi-account-circle"></i><span
-                                        class="hide-menu">Transfer Initiation Form</span></a>
-                                <ul aria-expanded="false" class="collapse first-level">
-
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.other') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon"></i><span class="hide-menu">Transfer
-                                                Form(Others)</span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Transfer Initiation Form </span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('authorizetransfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Authorized Transfer Request</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-
-                            @if (permission_employee() != null)
-                                <li class="sidebar-item">
-                                    <a class="sidebar-link has-arrow waves-effect waves-dark"
-                                        href="javascript:void(0)" aria-expanded="false"><i
-                                            class="mdi mdi-cart"></i><span class="hide-menu">Leave
-                                            Management</span></a>
-                                    <ul aria-expanded="false" class="collapse first-level">
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 4)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('employee.leave.request') }}"
-                                                        class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Apply Leave</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 5)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('LeaveBalanceview') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-scale-balance"></i><span
-                                                            class="hide-menu">Leave Balance</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 6)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('HODLeave.index') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Leave Requests</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @endif
-                        @elseif(Auth::user()->is_school == 3 && Auth::user()->role == 'HOF')
-                            <li class="sidebar-item">
-                                <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
-                                    aria-expanded="false"><i class="mdi mdi-account-circle"></i><span
-                                        class="hide-menu">Transfer Initiation Form</span></a>
-                                <ul aria-expanded="false" class="collapse first-level">
-
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.other') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon"></i><span class="hide-menu">Transfer
-                                                Form(Others)</span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('transfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Transfer Initiation Form </span></a>
-                                    </li>
-                                    <li class="sidebar-item">
-                                        <a href="{{ route('authorizetransfer.list') }}" class="sidebar-link"><i
-                                                class="mdi mdi-emoticon-cool"></i><span class="hide-menu">List
-                                                Authorized Transfer Request</span></a>
-                                    </li>
-                                </ul>
-                            </li>
-                            @if (permission_employee() != null)
-                                <li class="sidebar-item">
-                                    <a class="sidebar-link has-arrow waves-effect waves-dark"
-                                        href="javascript:void(0)" aria-expanded="false"><i
-                                            class="mdi mdi-cart"></i><span class="hide-menu">Leave
-                                            Management</span></a>
-                                    <ul aria-expanded="false" class="collapse first-level">
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 4)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('employee.leave.request') }}"
-                                                        class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Apply Leave</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 5)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('LeaveBalanceview') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-scale-balance"></i><span
-                                                            class="hide-menu">Leave Balance</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                        @foreach (permission_employee() as $permi)
-                                            @if ($permi->id == 6)
-                                                <li class="sidebar-item">
-                                                    <a href="{{ route('HOFLeave.index') }}" class="sidebar-link"><i
-                                                            class="mdi mdi-calendar-clock"></i><span
-                                                            class="hide-menu">Leave Requests</span></a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @endif
-                        @else
                         
+                           @if(Auth::user()->category == '')
                             <li class="sidebar-item">
                                 <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
                                     aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span
@@ -717,7 +482,9 @@
                                     </li>
                                 </ul>
                             </li>
+                            @endif
 
+                            @if(Auth::user()->category == 'Academic' || Auth::user()->category == '')
                             <li class="sidebar-item">
                                 <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
                                     aria-expanded="false"><i class="fas fa-building"></i><span
@@ -740,6 +507,8 @@
                                     </li>
                                 </ul>
                             </li>
+                            @endif
+                            @if(Auth::user()->category == 'Non-Academic' || Auth::user()->category == '')
                             <li class="sidebar-item">
                                 <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
                                     aria-expanded="false"><i class="fas fa-building"></i><span
@@ -752,11 +521,12 @@
                                     </li>
                                     <li class="sidebar-item">
                                         <a href="{{ route('division.list') }}" class="sidebar-link"><i
-                                                class="fas fa-list-alt"></i><span class="hide-menu"> Division List (Academic)
+                                                class="fas fa-list-alt"></i><span class="hide-menu"> Division List @if(Auth::user()->category == '') (Non-Academic) @endif
                                             </span></a>
                                     </li>
                                 </ul>
                             </li>
+                            @endif
                             <li class="sidebar-item">
                                 <a class="sidebar-link has-arrow waves-effect waves-dark" href="javascript:void(0)"
                                     aria-expanded="false"><i class="mdi mdi-format-list-numbers"></i><span
@@ -767,16 +537,20 @@
                                                 class="mdi mdi-library-plus"></i><span class="hide-menu">Add
                                                 Unit </span></a>
                                     </li>
+                                    @if(Auth::user()->category == 'Academic' || Auth::user()->category == '')
                                     <li class="sidebar-item">
                                         <a href="{{ route('unit.list') }}" class="sidebar-link"><i
                                                 class="fas fa-list-alt"></i><span class="hide-menu">Unit
                                                 List (Academic)</span></a>
                                     </li>
+                                    @endif
+                                    @if(Auth::user()->category == 'Non-Academic' || Auth::user()->category == '')
                                     <li class="sidebar-item">
                                         <a href="{{ route('non_academic_unit.list') }}" class="sidebar-link"><i
                                                 class="fas fa-list-alt"></i><span class="hide-menu">Unit
                                                 List (Non-Academic)</span></a>
                                     </li>
+                                    @endif
                                 </ul>
                             </li>
 
@@ -790,16 +564,20 @@
                                                 class="mdi mdi-library-plus"></i><span class="hide-menu">Add
                                                 Designation </span></a>
                                     </li>
+                                    @if(Auth::user()->category == 'Academic' || Auth::user()->category == '')
                                     <li class="sidebar-item">
                                         <a href="{{ route('designation.list') }}" class="sidebar-link"><i
                                                 class="fas fa-list-alt"></i><span class="hide-menu">Designation
                                                 List (Academic)</span></a>
                                     </li>
+                                    @endif
+                                    @if(Auth::user()->category == 'Non-Academic' || Auth::user()->category == '')
                                     <li class="sidebar-item">
                                         <a href="{{ route('non_academic_designation.list') }}" class="sidebar-link"><i
                                                 class="fas fa-list-alt"></i><span class="hide-menu">Designation
                                                 List (Non-Academic)</span></a>
                                     </li>
+                                    @endif
                                 </ul>
                             </li>
 
@@ -954,7 +732,6 @@
                                     </li>
                                 </ul>
                             </li>
-                        @endif
                     </ul>
                 </nav>
                 <div class="bottom-logo">

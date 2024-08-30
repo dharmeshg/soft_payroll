@@ -120,13 +120,30 @@ class EmployeeController extends Controller
         $states = State::get();
         $stateoforigins = StateOrigin::get();
 
-        $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
-        $division = Division::where('user_id','=',Auth::user()->id)->get();
-        $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
-        $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $non_academic_departments = NonAcademicsDepartment::where('id','=',Auth::user()->employee->official_information->non_Academic_department)->get();
+            $division = Division::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+            $work_non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->employee->institution_id)->get();
+            $work_non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->employee->institution_id)->get();
 
 
-        return view('employee/add1', compact('order_next_id', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data', 'non_academic_departments', 'division', 'non_academic_units', 'non_academic_designations'));
+        }else{
+            $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+            $work_non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+
+            $division = Division::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+            $work_non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+
+        }
+
+
+
+
+        return view('employee/add1', compact('order_next_id', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data', 'non_academic_departments', 'division', 'non_academic_units', 'non_academic_designations', 'work_non_academic_departments', 'work_non_academic_designations'));
     }
 
     public function getState(Request $request)
@@ -212,7 +229,15 @@ class EmployeeController extends Controller
         }
         $Employee->dateofdeath = $request['dateofdeath'];
         $Employee->causeofdeath = $request['causeofdeath'];
-        $Employee->institution_id = Auth::user()->id;
+
+        // $Employee->institution_id = Auth::user()->id;
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+            $Employee->institution_id = Auth::user()->employee->institution_id;
+        }else{
+            $Employee->institution_id = Auth::user()->id;
+        }
+
+
         $Employee->employeestatus = $request['employeestatus'];
         $Employee->reporting_employee_id = $request['reporting_employee_id'];
         if(isset($request->profile_image) && $request->profile_image != ''){
@@ -265,10 +290,15 @@ class EmployeeController extends Controller
             $official_info->staff_id = date('Y') . '' . $new_so_number;
         }
         //dd($official_info->staff_id);
-        $official_info->category = $request['category_unit'];
+        if(Auth::user()->category != ''){
+            $official_info->category = Auth::user()->category;
+        }else{
+            $official_info->category = $request['category_unit'];
+        }
+        
 
 
-        if($request['category_unit'] == 'Non-Academic'){
+        if($request['category_unit'] == 'Non-Academic' || Auth::user()->category == 'Non-Academic'){
             $official_info->non_Academic_department = $request['department_non_Academic'];
             $official_info->non_Academic_division = $request['division_non_Academic'];
             $official_info->non_Academic_designation = $request['designation_non_Academic'];
@@ -296,7 +326,15 @@ class EmployeeController extends Controller
         $official_info->typeofemployment = $request['typeofemployment'];
         $official_info->officialinfoother = $request['officialinfoother'];
         $official_info->reporting_employee_id = $request['reporting_employee_id'];
-        $official_info->user_id = Auth::user()->id;
+
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+            $official_info->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $official_info->user_id = Auth::user()->id;
+        }
+        
+        // $official_info->user_id = Auth::user()->id;
+
         $official_info->save();
 
         $Residential = new Residential();
@@ -311,7 +349,14 @@ class EmployeeController extends Controller
         $Residential->phone_no_1 = $request['phone_no_1'];
         $Residential->phone_no_2 = $request['phone_no_2'];
         $Residential->email = $request['email'];
-        $Residential->user_id = Auth::user()->id;
+        // $Residential->user_id = Auth::user()->id;
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+            $Residential->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $Residential->user_id = Auth::user()->id;
+        }
+
+
         $Residential->save();
         $filename = NULL;
         if ($request->hasFile('image')) {
@@ -328,7 +373,12 @@ class EmployeeController extends Controller
         $Kin_detail->address = $request['address'];
         $Kin_detail->kindetailssex = $request['kindetailssex'];
         $Kin_detail->image = $filename;
-        $Kin_detail->user_id = Auth::user()->id;
+        // $Kin_detail->user_id = Auth::user()->id;
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOF' || Auth::user()->role == 'HOU')){
+            $Kin_detail->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $Kin_detail->user_id = Auth::user()->id;
+        }
         $Kin_detail->save();
 
         $acadamicqualification = new AcademicQualification();
@@ -340,8 +390,15 @@ class EmployeeController extends Controller
                 $academic_uploadfilename = $current . $academic_uploadfile->getClientOriginalName();
                 $academic_uploadfile->move('public/files/', $academic_uploadfilename);
             }
+
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOF' || Auth::user()->role == 'HOU')){
+                $Academic_user = Auth::user()->employee->institution_id;
+            }else{
+                $Academic_user = Auth::user()->id;
+            }
+
             $data = array(
-                'user_id' => Auth::user()->id,
+                'user_id' => $Academic_user,
                 'employee_id' => $emp_id,
                 'institutionname' => $request->institutionname[$key],
                 'institutioncategory' => $request->institutioncategory[$key],
@@ -362,7 +419,7 @@ class EmployeeController extends Controller
         $work_experience->employee_id = $emp_id;
         $work_experience->user_id = Auth::user()->id;
         foreach ($request->workinstitutionname as  $key => $value) {
-            if($request->category_unit_work_experience[$key] == 'Non-Academic'){
+            if($request->category_unit_work_experience[$key] == 'Non-Academic' || Auth::user()->category == 'Non-Academic'){
                 $workdepartment = '';
                 $workdesignation = '';
                 $non_academic_workdepartment = $request->workdepartment_non_academic[$key];
@@ -374,9 +431,14 @@ class EmployeeController extends Controller
                 $workdepartment = $request->workdepartment[$key];
                 $workdesignation = $request->workdesignation[$key];
             }
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+                $WorkExperience_user_id = Auth::user()->employee->institution_id;
+            }else{
+                $WorkExperience_user_id = Auth::user()->id;
+            }
 
             $data = array(
-                'user_id' => Auth::user()->id,
+                'user_id' => $WorkExperience_user_id,
                 'employee_id' => $emp_id,
                 'workinstitutionname' => $request->workinstitutionname[$key],
                 'workstartdate' => $request->workstartdate[$key],
@@ -409,7 +471,12 @@ class EmployeeController extends Controller
         $salary_details->accountnumber = $request->accountnumber;
         $salary_details->bvn = $request->bvn;
         $salary_details->tin = $request->tin;
-        $salary_details->user_id = Auth::user()->id;
+        // $salary_details->user_id = Auth::user()->id;
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+            $salary_details->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $salary_details->user_id = Auth::user()->id;
+        }
         $salary_details->save();
 
         $Referee_info = new RefereeInfo();
@@ -422,8 +489,13 @@ class EmployeeController extends Controller
                 $refereeconsentletterfilename = $current . $refereeconsentletterfile->getClientOriginalName();
                 $refereeconsentletterfile->move('public/files/', $refereeconsentletterfilename);
             }
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+                $referee_user_id = Auth::user()->employee->institution_id;
+            }else{
+                $referee_user_id = Auth::user()->id;
+            }
             $data = array(
-                'user_id' => Auth::user()->id,
+                'user_id' => $referee_user_id,
                 'employee_id' => $emp_id,
                 'referee_info_fullname' => $request->referee_info_fullname[$key],
                 'referee_info_occupation' => $request->referee_info_occupation[$key],
@@ -446,13 +518,19 @@ class EmployeeController extends Controller
                 $datauser['is_school'] = $request['is_school'];
                 $datauser['email'] = $request['employeeemail'];
                 $datauser['password'] = Hash::make($request['password']);
-                if($request['category_unit'] == 'Non-Academic'){
+                if($request['category_unit'] == 'Non-Academic' || Auth::user()->category == 'Non-Academic'){
                     $datauser['role'] = $request['role_non_Academic'];
                 }else{
                     $datauser['role'] = $request['role'];
                 }
                 
-                $datauser['category'] = $request['category_unit'];
+                if(Auth::user()->category != ''){
+                    $datauser['category'] = Auth::user()->category;
+
+                }else{
+                    $datauser['category'] = $request['category_unit'];
+                }
+                
 
                 $Employeeuser = $Employeeuser->create($datauser);
 
@@ -464,8 +542,13 @@ class EmployeeController extends Controller
         }
 
         $certificates = new Certificate();
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOF' || Auth::user()->role == 'HOU')){
+            $certificates->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $certificates->user_id = Auth::user()->id;
+        }
         $certificates->employee_id = $emp_id;
-        $certificates->user_id = Auth::user()->id;
+        // $certificates->user_id = Auth::user()->id;
         if ($request->hasFile('birthcerticate')) {
             $current = Carbon::now()->format('YmdHs');
             $birthcerticatefile = $request->file('birthcerticate');
@@ -520,8 +603,31 @@ class EmployeeController extends Controller
 
     public function index()
     {
-        $data = Employee::where('institution_id', '=', Auth::user()->id)->orderBy('id', 'DESC')->get();
-        $employeecount = Employee::where('institution_id', '=', Auth::user()->id)->count();
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOU' || Auth::user()->role == 'HOS')){
+            // $data = Employee::where('institution_id', '=', Auth::user()->employee->institution_id)->orderBy('id', 'DESC')->official_information('non_Academic_department','=', Auth::user()->employee->official_information->non_Academic_department)->get();
+            $data = Employee::where('institution_id', Auth::user()->employee->institution_id)
+                    ->whereHas('official_information', function($query) {
+                        $query->where('non_Academic_department', Auth::user()->employee->official_information->non_Academic_department)
+                            ->Where('role', '!=', Auth::user()->role)
+                            ->Where('category', Auth::user()->category);
+                     })
+                    ->orderBy('id', 'DESC')
+                    ->get();
+            // $employeecount = Employee::where('institution_id', '=', Auth::user()->employee->institution_id)->count();
+            $employeecount = Employee::where('institution_id', Auth::user()->employee->institution_id)
+                            ->whereHas('official_information', function($query) {
+                                $query->where('non_Academic_department', Auth::user()->employee->official_information->non_Academic_department)
+                                ->where('category', Auth::user()->category)
+                                ->orWhere('role', '!=',Auth::user()->role);
+
+                            })
+                            ->orderBy('id', 'DESC')
+                            ->count();
+        }else{
+            $data = Employee::where('institution_id', '=', Auth::user()->id)->orderBy('id', 'DESC')->get();
+            $employeecount = Employee::where('institution_id', '=', Auth::user()->id)->count();
+        }
+     
         
         
         // $data = Employee::where('institution_id', '=', Auth::user()->id)
@@ -562,14 +668,34 @@ class EmployeeController extends Controller
         $states = State::get();
         $stateoforigins = StateOrigin::get();
 
-        $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
-        $division = Division::where('user_id','=',Auth::user()->id)->get();
-        $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
-        $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $non_academic_departments = NonAcademicsDepartment::where('id','=',Auth::user()->employee->official_information->non_Academic_department)->get();
+            $division = Division::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+            $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+            $work_non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->employee->institution_id)->get();
+            $work_non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->employee->institution_id)->get();
+
+
+        }else{
+            $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+            $work_non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+
+            $division = Division::where('user_id','=',Auth::user()->id)->where('faculty_id', $employee->official_information->non_Academic_department)->get();
+            $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->where('faculty_id', $employee->official_information->non_Academic_department)->get();
+            $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->where('faculty_id', $employee->official_information->non_Academic_department)->get();
+            $work_non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+
+        }
+
+        // $non_academic_departments = NonAcademicsDepartment::where('user_id','=',Auth::user()->id)->get();
+        // $division = Division::where('user_id','=',Auth::user()->id)->get();
+        // $non_academic_units = NonAcademicUnit::where('user_id','=',Auth::user()->id)->get();
+        // $non_academic_designations = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
 
         // dd($employee->official_information);
 
-        return view('employee/add1', compact('employee', 'id', 'acadamicdata', 'workdata', 'refeedata', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'kin_details', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data','non_academic_departments','division','non_academic_units','non_academic_designations'));
+        return view('employee/add1', compact('employee', 'id', 'acadamicdata', 'workdata', 'refeedata', 'departments', 'designations', 'facultydirectorates', 'countries', 'nationalities', 'kin_details', 'localgovermentoforigins', 'states', 'stateoforigins', 'units','data','non_academic_departments','division','non_academic_units','non_academic_designations', 'work_non_academic_departments', 'work_non_academic_designations'));
     }
 
     public function update(Request $request, $id)
@@ -638,15 +764,27 @@ class EmployeeController extends Controller
 
         $official_infos = OfficialInfo::where('employee_id', '=', $id)->first();
 
-        $official_infos->category = $request['category_unit'];
+
+        if(Auth::user()->category != ''){
+            $official_infos->category = Auth::user()->category;
+        }else if($request['department_non_Academic'] != ''){
+            $official_infos->category = 'Non-Academic';
+        }else if($request['department'] != ""){
+            $official_infos->category = 'Academic';
+        }else{
+            $official_infos->category = $request['category_unit'];
+
+        }
 
 
-        if($request['category_unit'] == 'Non-Academic'){
+        if($request['category_unit'] == 'Non-Academic' || $request['department_non_Academic'] != '' || Auth::user()->category != 'Non-Academic'){
             $official_infos->non_Academic_department = $request['department_non_Academic'];
             $official_infos->non_Academic_division = $request['division_non_Academic'];
             $official_infos->non_Academic_designation = $request['designation_non_Academic'];
             $official_infos->non_Academic_unit = $request['unit_non_Academic'];
             $official_infos->non_Academic_role = $request['role_non_Academic'];
+            $official_infos->role = $request['role_non_Academic'];
+
 
         }else{
             $official_infos->directorate = $request['directorate'];
@@ -668,7 +806,7 @@ class EmployeeController extends Controller
         $official_infos->unit = $request['unit'];
         $official_infos->typeofemployment = $request['typeofemployment'];
         $official_infos->officialinfoother = $request['officialinfoother'];
-        $official_infos->role = $request['role'];
+        // $official_infos->role = $request['role'];
         $official_infos->reporting_employee_id = $request['reporting_employee_id'];
 
 
@@ -691,7 +829,14 @@ class EmployeeController extends Controller
         $Residential->phone_no_1 = $request['phone_no_1'];
         $Residential->phone_no_2 = $request['phone_no_2'];
         $Residential->email = $request['email'];
-        $Residential->user_id = Auth::user()->id;
+
+        // $Residential->user_id = Auth::user()->id;
+        if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+            $Residential->user_id = Auth::user()->employee->institution_id;
+        }else{
+            $Residential->user_id = Auth::user()->id;
+        }
+
         $Residential->update();
 
         $Kin_detail = Kin_detail::where('employee_id', '=', $id)->first();
@@ -727,7 +872,13 @@ class EmployeeController extends Controller
             }    
             else{
                 $acd_id = '';
-            }   
+            }  
+            
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+                $user_id = Auth::user()->employee->institution_id;
+            }else{
+                $user_id = Auth::user()->id;
+            }
             if (in_array($acd_id, $data1)) {                
                 $AcademicQualification = AcademicQualification::where('id', '=', $acd_id)->first();
                 if(isset($AcademicQualification)) {
@@ -773,7 +924,7 @@ class EmployeeController extends Controller
                     }
                 }
                 $data = array(
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $user_id,
                     'employee_id' => (int)$emp_id,
                     'institutionname' => $request->institutionname[$key],
                     'institutioncategory' => $request->institutioncategory[$key],
@@ -803,6 +954,12 @@ class EmployeeController extends Controller
         }
                   
         foreach ($request->workinstitutionname as  $key => $value) {
+
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS' || Auth::user()->role == 'HOU')){
+                $work_user_id = Auth::user()->employee->institution_id;
+            }else{
+                $work_user_id = Auth::user()->id;
+            }
             if($request->category_unit_work_experience[$key] == 'Non-Academic'){
                 $workdepartment = '';
                 $workdesignation = '';
@@ -842,7 +999,7 @@ class EmployeeController extends Controller
                 $acd_id = '';
             } else {
                 $data = array(
-                    'user_id' => Auth::user()->id,
+                    'user_id' => $work_user_id,
                     'employee_id' => $emp_id,
                     'workinstitutionname' => $request->workinstitutionname[$key],
                     'workstartdate' => $request->workstartdate[$key],

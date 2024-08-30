@@ -50,6 +50,8 @@
                                 {{ csrf_field() }}
                     @endif
 
+                    
+
 
                     <div role="application" class="wizard clearfix" id="steps-uid-0">
                         <div class="content clearfix">
@@ -70,12 +72,12 @@
                                 <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 form-group">
                                     <label for="directorate">Category</label>
                                     <select class="category_unit" name="category_unit" id="category_unit"
-                                        @if (isset($unit->category)) disabled @endif>
+                                        @if (isset($unit->category) || Auth::user()->category != '') disabled @endif>
                                         <option
-                                            {{ isset($unit->category) && $unit->category == 'Academic' ? 'selected' : '' }}
+                                            {{ (isset($unit->category) && $unit->category) ||  Auth::user()->category == 'Academic' ? 'selected' : '' }}
                                             value="Academic">Academic</option>
                                         <option
-                                            {{ isset($unit->category) && $unit->category == 'Non-Academic' ? 'selected' : '' }}
+                                            {{ (isset($unit->category) && $unit->category) || Auth::user()->category == 'Non-Academic' ? 'selected' : '' }}
                                             value="Non-Academic">Non-Academic</option>
                                     </select>
                                 </div>

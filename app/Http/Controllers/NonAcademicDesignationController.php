@@ -80,18 +80,29 @@ class NonAcademicDesignationController extends Controller
 
     public function index()
     {
-        $data = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
-        // if(Auth::user()->is_school == 3){
-        //    $data = Designation::where('user_id','=',Auth::user()->employee->institution_id)->get();
-        // } 
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $data = NonAcademicsDesignation::where('user_id','=',Auth::user()->employee->institution_id)->where('faculty_id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+
+        }else{
+            $data = NonAcademicsDesignation::where('user_id','=',Auth::user()->id)->get();
+        }
+
         return view('/designation/non_academic_index',['data'=> $data]);
     }
 
     public function edit($id)
     {
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $nonAcademicDepartment = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+
+        }else{
+            $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+
+        }
+
         $faculty = FacultyDirectorate::where('user_id','=',Auth::user()->id)->get();  
         $designation = NonAcademicsDesignation::findOrFail($id);
-        $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+        // $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
         $division = Division::get();
         $designation['category'] = 'Non-Academic';
 

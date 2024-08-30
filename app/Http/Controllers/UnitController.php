@@ -25,13 +25,22 @@ class UnitController extends Controller
 
     public function add()
     {
-        $faculty = FacultyDirectorate::where('user_id', '=', Auth::user()->id)->get();
-        $department = Department::get();
+        if(Auth::user()->category == 'Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HOS')){
+            $faculty = FacultyDirectorate::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+            $department = Department::get();
 
-        $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
-        $division = Division::get();
-
-
+        }else{
+            $faculty = FacultyDirectorate::where('user_id', '=', Auth::user()->id)->get();
+            $department = Department::get();
+        }
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $nonAcademicDepartment = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+            $division = Division::get();
+        }else{
+            $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+            $division = Division::get();
+        }
+     
         // $unit = Unit::all();
         return view('/unit/add', compact('faculty', 'department', 'nonAcademicDepartment', 'division'));
     }
@@ -39,14 +48,20 @@ class UnitController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
-        if ($request->category_unit == 'Non-Academic') {
+        if ($request->category_unit == 'Non-Academic' || Auth::user()->category == 'Non-Academic') {
 
             $unit = new NonAcademicUnit;
             $unit->name = $request['name'];
             $unit->description = $request['description'];
             $unit->faculty_id = $request['noe_academic_department'];
             $unit->department_id = $request['noe_academic_division'];
-            $unit->user_id = Auth::user()->id;
+
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS')){
+                $unit->user_id = Auth::user()->employee->institution_id;
+            }else{
+                $unit->user_id = Auth::user()->id;
+            }
+            
             $unit->save();
 
             if ($unit)

@@ -23,10 +23,26 @@ class DesignationController extends Controller
     public function add()
     {
         // $unit = Unit::all();
-            $faculty = FacultyDirectorate::where('user_id','=',Auth::user()->id)->get();
+
+        if(Auth::user()->category == 'Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HOS')){
+            $faculty = FacultyDirectorate::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
             $department = Department::get();
+        }else{
+            $faculty = FacultyDirectorate::where('user_id', '=', Auth::user()->id)->get();
+            $department = Department::get();
+        }
+
+        if(Auth::user()->category == 'Non-Academic' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV')){
+            $nonAcademicDepartment = NonAcademicsDepartment::where('id', '=', Auth::user()->employee->official_information->non_Academic_department)->get();
+            $division = Division::get();
+        }else{
             $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
             $division = Division::get();
+        }
+            // $faculty = FacultyDirectorate::where('user_id','=',Auth::user()->id)->get();
+            // $department = Department::get();
+            // $nonAcademicDepartment = NonAcademicsDepartment::where('user_id', '=', Auth::user()->id)->get();
+            // $division = Division::get();
             return view('/designation/add',compact('faculty','department', 'nonAcademicDepartment', 'division'));
     }
 
@@ -43,14 +59,19 @@ class DesignationController extends Controller
             return back()->with('erorr','Profile Not Updated');
         }
 
-        if($request->category_unit == 'Non-Academic'){
+        if($request->category_unit == 'Non-Academic'|| Auth::user()->category == 'Non-Academic'){
             $designation = new NonAcademicsDesignation();
             $designation->title = $request['title'];
             $designation->description = $request['description'];
             $designation->faculty_id = $request['noe_academic_department'];
             $designation->department_id = $request['noe_academic_division'];
             $designation->image = $filename; 
-            $designation->user_id = Auth::user()->id;  
+            // $designation->user_id = Auth::user()->id;  
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HODV' || Auth::user()->role == 'HOS')){
+                $designation->user_id = Auth::user()->employee->institution_id;
+            }else{
+                $designation->user_id = Auth::user()->id;
+            }
             $designation->save();
     
             if($designation)
@@ -65,7 +86,12 @@ class DesignationController extends Controller
             $designation->faculty_id = $request['directorate'];
             $designation->department_id = $request['department'];
             $designation->image = $filename; 
-            $designation->user_id = Auth::user()->id;  
+            // $designation->user_id = Auth::user()->id;  
+            if(Auth::user()->category != '' && (Auth::user()->role == 'HOD' || Auth::user()->role == 'HOS')){
+                $designation->user_id = Auth::user()->employee->institution_id;
+            }else{
+                $designation->user_id = Auth::user()->id;
+            }
             $designation->save();
     
             if($designation)

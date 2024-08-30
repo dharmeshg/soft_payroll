@@ -88,12 +88,12 @@
                     <div class="col-xxl-6 col-xl-6 col-lg-6 col-md-6 col-sm-12 col-12 form-group">
                                     <label for="directorate">Category</label>
                                     <select class="category_unit" name="category_unit" id="category_unit"
-                                        @if (isset($designation->category)) disabled @endif>
+                                        @if (isset($designation->category) || Auth::user()->category != '') disabled @endif>
                                         <option
-                                            {{ isset($designation->category) && $designation->category == 'Academic' ? 'selected' : '' }}
+                                            {{ (isset($designation->category) && $designation->category) || Auth::user()->category == 'Academic' ? 'selected' : '' }}
                                             value="Academic">Academic</option>
                                         <option
-                                            {{ isset($designation->category) && $designation->category == 'Non-Academic' ? 'selected' : '' }}
+                                            {{ (isset($designation->category) && $designation->category) || Auth::user()->category == 'Non-Academic' ? 'selected' : '' }}
                                             value="Non-Academic">Non-Academic</option>
                                     </select>
                     </div>
